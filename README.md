@@ -8,9 +8,10 @@ The Bowler Quickstart is a Skeleton sbt project and Bowler app that gets you up 
 * Run sbt
 * Done! Ready to start writing your Bowler app!
 
+# Heroku deploy
 To deploy to heroku install the heroku gem. And create an account with a cedar stack.
 
-Then do
+##Then do
 * git push <your heroku repo> master
 * Watch in joy!
  
