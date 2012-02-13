@@ -1,0 +1,11 @@
+<form method="post">
+    <input type="text" name="name.name"/>
+    <input type="submit"/>
+</form>
+
+Many names:
+<ul>
+    {{#names}}
+        <li>{{name}}</li>    
+    {{/names}}
+</ul>
