@@ -10,7 +10,7 @@ import org.squeryl.Session
 /**
  * This class acts as the starting point and bootstrap point for our application
  */
-class Bootstrap{
+class Bootstrap extends BasicSessionConnection with CreateableDatabase{
   // parent layout
   val parentLayout = DefaultLayout("default", "doLayout", None, None)
 
@@ -26,16 +26,12 @@ class Bootstrap{
   org.bowlerframework.view.scalate.RenderEngine.getEngine.allowCaching = false
   org.bowlerframework.view.scalate.RenderEngine.getEngine.allowReload = true
   
-  val cpds = setupC3p0("jdbc:h2:mem:test_mem")
-  SessionFactory.concreteFactory = Some(() => connection)
+  val jdbcUrl = "jdbc:h2:mem:test_mem"
+  createDatabaseIfNeeded
+}
 
-  def connection = {
-    Session.create(cpds.getConnection, new H2Adapter())
-  }
-
-  makeTables
-
-  def makeTables = {
+trait CreateableDatabase{
+   def createDatabaseIfNeeded = {
     val session = SessionFactory.newSession
     session.bindToCurrentThread
     try {
@@ -50,8 +46,18 @@ class Bootstrap{
       session.unbindFromCurrentThread
     }
   }
+}
 
-  def setupC3p0(url:String) = {
+trait BasicSessionConnection{
+  val jdbcUrl:String
+  lazy val cpds = setupC3p0(jdbcUrl)
+  SessionFactory.concreteFactory = Some(() => connection)
+  
+  def connection = {
+    Session.create(cpds.getConnection, new H2Adapter())
+  }
+  
+  protected def setupC3p0(url:String) = {
     val cpds = new ComboPooledDataSource
     cpds.setDriverClass("org.h2.Driver");
     
